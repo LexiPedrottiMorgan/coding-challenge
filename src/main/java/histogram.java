@@ -6,7 +6,7 @@ import java.util.*;
 public class histogram {
     public static void main(String[] args) {
 //  Bring in the file
-        File file = new File("input.txt");
+        final File file = new File("input.txt");
 
         generateMap(file);
     }
@@ -61,9 +61,9 @@ public class histogram {
         List<Map.Entry<String, Integer>> convertedWordCounts = new LinkedList<>(wordCounts.entrySet());
 
         Collections.sort(convertedWordCounts, new Comparator<>() {
-                    public int compare(Map.Entry<String, Integer> o1,
-                                       Map.Entry<String, Integer> o2) {
-                        return (o2.getValue()).compareTo(o1.getValue());
+                    public int compare(Map.Entry<String, Integer> a,
+                                       Map.Entry<String, Integer> b) {
+                        return (b.getValue()).compareTo(a.getValue());
                     }
                 });
 
@@ -77,7 +77,7 @@ public class histogram {
             }
         }
 
-        int width = longestWordForFormatting.length() + 1;
+        int longestWordLength = longestWordForFormatting.length() + 1;
 
 //       Create output.txt file
         try (FileWriter file = new FileWriter("output.txt")){
@@ -90,8 +90,8 @@ public class histogram {
                     equals = equals + "=";
                 }
                 String keyFormatted = "";
-                if(key.length() < width){
-                    int spacesToAdd = width - key.length();
+                if(key.length() < longestWordLength){
+                    int spacesToAdd = longestWordLength - key.length();
                     String extraSpaces = "";
                     for(int i = 0; i<spacesToAdd; i++){
                         extraSpaces = extraSpaces + " ";
@@ -99,7 +99,7 @@ public class histogram {
                     keyFormatted = extraSpaces + key;
                 }
 //          Write to the file
-//          checks for empty words and doesn't add them to the file
+//          checks empty lines in the input file and were counted as words, and doesn't write them to the file
                 if(key.length()>0){
                     file.write(keyFormatted + " | " + equals + " (" + value + ")\n");
                 }
