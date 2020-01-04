@@ -16,24 +16,29 @@ public class histogram {
         HashMap<String, Integer> wordCounts = new HashMap<>();
 
         try{
-
             Scanner scanner = new Scanner(file);
-
             while(scanner.hasNextLine()){
-
                 String[] currentLine = scanner.nextLine().toLowerCase().split(" ");
 
-
+//      Get rid of special characters in words so that words can be compared without punctuation
+//      Note: this will also remove hyphens from hyphenated words
                 for(String word : currentLine){
-
-// TODO: instead of checking for special chars, check if isLetter so that this will work for all                         inputs not just this one
-//      Get rid of special characters at the end of words that will cause a problem when comparing words
-                    if(word.contains(",") || word.contains(".") || word.contains("!") || word.contains("?")){
-                        word = word.substring(0, word.length()-1);
+                    for(int i = 0; i<word.length(); i++){
+                        if(!Character.isLetter(word.charAt(i)) && !Character.isDigit(word.charAt(i))){
+                            String beginning = "";
+                            String end = "";
+                            if(i != 0) {
+                                beginning = word.substring(0, i);
+                            }
+                            if(i != word.length()-1){
+                                end = word.substring(i+1);
+                            }
+                            word = beginning + end;
+                        }
                     }
 //      If the word is not i the map, add it and add the value 1
                     if(!wordCounts.keySet().contains(word)){
-                        wordCounts.put(word, 1);
+                        wordCounts.put(word.trim(), 1);
                     } else {
 //      If the word is in the map increment the value
                         Integer incrementedValue = wordCounts.get(word) + 1;
@@ -74,10 +79,9 @@ public class histogram {
 
         int width = longestWordForFormatting.length() + 1;
 
-
-//       Iterate through the convertedWordCounts to set the number of = and spaces needed for the formatted output
+//       Create output.txt file
         try (FileWriter file = new FileWriter("output.txt")){
-
+//       Iterate through the convertedWordCounts to set the number of = and spaces needed for the formatted output
             for(Map.Entry entry : convertedWordCounts){
                 String key = entry.getKey().toString();
                 Integer value = (Integer) entry.getValue();
@@ -94,9 +98,11 @@ public class histogram {
                     }
                     keyFormatted = extraSpaces + key;
                 }
-    //            Print out the formatted output
-                System.out.printf("%s | %s (%s)%n", keyFormatted, equals, value);
-                file.write(keyFormatted + " | " + equals + " (" + value + ")\n");
+//          Write to the file
+//          checks for empty words and doesn't add them to the file
+                if(key.length()>0){
+                    file.write(keyFormatted + " | " + equals + " (" + value + ")\n");
+                }
             }
 
         } catch(IOException e){
