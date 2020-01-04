@@ -1,11 +1,7 @@
 package main.java;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
-
-import static java.util.Map.Entry.comparingByValue;
-import static java.util.stream.Collectors.toMap;
 
 public class histogram {
     public static void main(String[] args) {
@@ -78,25 +74,33 @@ public class histogram {
 
         int width = longestWordForFormatting.length() + 1;
 
+
 //       Iterate through the convertedWordCounts to set the number of = and spaces needed for the formatted output
-        for(Map.Entry entry : convertedWordCounts){
-            String key = entry.getKey().toString();
-            Integer value = (Integer) entry.getValue();
-            String equals = "";
-            for(int i = 0; i< value; i++){
-                equals = equals + "=";
-            }
-            String keyFormatted = "";
-            if(key.length() < width){
-                int spacesToAdd = width - key.length();
-                String extraSpaces = "";
-                for(int i = 0; i<spacesToAdd; i++){
-                    extraSpaces = extraSpaces + " ";
+        try (FileWriter file = new FileWriter("output.txt")){
+
+            for(Map.Entry entry : convertedWordCounts){
+                String key = entry.getKey().toString();
+                Integer value = (Integer) entry.getValue();
+                String equals = "";
+                for(int i = 0; i< value; i++){
+                    equals = equals + "=";
                 }
-                keyFormatted = extraSpaces + key;
+                String keyFormatted = "";
+                if(key.length() < width){
+                    int spacesToAdd = width - key.length();
+                    String extraSpaces = "";
+                    for(int i = 0; i<spacesToAdd; i++){
+                        extraSpaces = extraSpaces + " ";
+                    }
+                    keyFormatted = extraSpaces + key;
+                }
+    //            Print out the formatted output
+                System.out.printf("%s | %s (%s)%n", keyFormatted, equals, value);
+                file.write(keyFormatted + " | " + equals + " (" + value + ")\n");
             }
-//            Print out the formatted output
-            System.out.printf("%s | %s (%s)%n", keyFormatted, equals, value);
+
+        } catch(IOException e){
+            System.out.println(e);
         }
     }
 }
